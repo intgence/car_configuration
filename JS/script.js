@@ -3,7 +3,14 @@ const exteriorColorSection = document.getElementById('exterior-buttons');
 const interiorColorSection = document.getElementById('interior-buttons');
 const extImg = document.querySelector('#exterior-img');
 const intImg = document.querySelector('#interior-img');
+const wheelBtns = document.getElementById('wheel-buttons');
 
+let selectedColor = 'Stealth Grey';
+const selectedOptions = {
+    'Performance Wheels': false,
+    'Performance Package': false,
+    'Full Self-Driving': false,
+};
 
 
 // Handle Top Bar on Scroll
@@ -44,8 +51,8 @@ const handleColorButtonClick = (event)=>{
 
     // Change Exterior Image
         if (event.currentTarget === exteriorColorSection){
-            const color = button.querySelector('img').alt;
-            extImg.src = extImgs[color];
+            selectedColor = button.querySelector('img').alt;
+            updateExtImg();
         }
         if (event.currentTarget === interiorColorSection){
             const color = button.querySelector('img').alt;
@@ -54,7 +61,32 @@ const handleColorButtonClick = (event)=>{
     }
 }
 
+// Update exgterior image based on wheel selection
+const updateExtImg = ()=>{
+    const performanceSuffix = selectedOptions['Performance Wheels'] ? '-performance' : '';
+    const colorKey = selectedColor in extImgs ? selectedColor : 'Stealth Grey';
+    extImg.src = extImgs[colorKey].replace('.jpg', `${performanceSuffix}.jpg`);
+}
+
+// Handle wheel selection
+const handleWheelBtnClick = (event)=>{
+    if(event.target.tagName == 'BUTTON'){
+        const btns = document.querySelectorAll('#wheel-buttons button');
+        btns.forEach((btn)=> btn.classList.remove('bg-gray-700', 'text-white'));
+        btns.forEach((btn)=> btn.classList.add('bg-gray-200'));
+        event.target.classList.add('bg-gray-700', 'text-white');
+
+        // const selectedWheel = event.target.textContent.includes('Performance');
+
+        // extImg.src = selectedWheel ? './images/model-y-stealth-grey-performance.jpg' : './images/model-y-stealth-grey.jpg';
+        selectedOptions['Performance Wheels'] = event.target.textContent.includes('Performance') ? true: false;
+        updateExtImg();
+    }
+
+}
+
 // Event Listener for Scrolling
 window.addEventListener('scroll', () => requestAnimationFrame(handleScroll)); //requestAnimationFrame is used to handle performance else handleScroll will be called multiple times
 exteriorColorSection.addEventListener('click', handleColorButtonClick);
 interiorColorSection.addEventListener('click', handleColorButtonClick);
+wheelBtns.addEventListener('click', handleWheelBtnClick);
